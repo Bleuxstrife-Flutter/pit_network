@@ -9,7 +9,7 @@ Use this Plugin to get wifi connected, list of saved wifi, list of active wifi, 
 First, add `pit_network` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
 ```
-pit_network: ^0.1.0
+pit_network: ^0.1.1
 ```
 
 ## Important
@@ -24,17 +24,17 @@ for read wifi state = <uses-permission android:name="android.permission.ACCESS_W
 
 ## Example for Get Saved Wifi List
 ```
-     List<dynamic> saveWifi = await PitNetwork.getSavedWifi();
+   List<SavedWifiModel> savedWifi = await PitNetwork.getSavedWifi();
 ```
 ## Example for Get Wifi Arround List
 ```
-     List<dynamic> wifiArround = await PitNetwork.getWifiArround();
+    List<WifiArroundModel> wifiArround = await PitNetwork.getWifiArround();
 ```
-## Example for Get Saved Wifi List
+## Example for Get Connected Wifi List
 ```
-     Map<String, dynamic> connectedWifi = await PitNetwork.getConnectedWifi();
+    ConnectedWifiModel connectedWifi = await PitNetwork.getConnectedWifi();
 ```
 ## Example for Get Network State
 ```
-     List<String> networkState =  await PitNetwork.getNetworkState();
+   NetworkStateModel networkState =  await PitNetwork.getNetworkState();
 ```

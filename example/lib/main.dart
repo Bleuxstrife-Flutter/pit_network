@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:pit_network/model.dart';
 import 'package:pit_network/pit_network.dart';
 
 void main() => runApp(MyApp());
@@ -12,10 +13,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<dynamic> wifiArround = [];
-  List<dynamic> savedWifi = [];
-  Map<String, dynamic> connectedWifi;
-  List<String> networkState;
+  List<WifiArroundModel> wifiArround = [];
+  List<SavedWifiModel> savedWifi = [];
+  ConnectedWifiModel connectedWifi;
+  NetworkStateModel networkState;
 
   @override
   void initState() {
@@ -24,10 +25,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initPlatformState() async {
-    List<dynamic> saveWifi = [];
-    List<dynamic> wifiArrounds = [];
-    Map<String, dynamic> connect;
-    List<String> netState;
+    List<SavedWifiModel> saveWifi = [];
+    List<WifiArroundModel> wifiArrounds = [];
+    ConnectedWifiModel connect;
+    NetworkStateModel netState;
     try {
       saveWifi = await PitNetwork.getSavedWifi();
       wifiArrounds = await PitNetwork.getWifiArround();

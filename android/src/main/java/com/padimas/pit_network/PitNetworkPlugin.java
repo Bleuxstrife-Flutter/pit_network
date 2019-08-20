@@ -10,6 +10,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -29,10 +30,10 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  */
 public class PitNetworkPlugin implements MethodCallHandler {
     public PitNetworkPlugin(Registrar registrar) {
-        this.registrar = registrar;
+        this.context = registrar.context();
     }
 
-    Registrar registrar;
+    Context context;
 
     /**
      * Plugin registration.
@@ -45,25 +46,40 @@ public class PitNetworkPlugin implements MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("getSavedWifi")) {
-            List<Map<String, Object>> res = getSavedWifi();
-            result.success(res);
+            try {
+                List<Map<String, Object>> res = getSavedWifi();
+                result.success(res);
+            } catch (Exception e) {
+                result.error("error", "getSavedWifi", e.getLocalizedMessage());
+            }
         } else if (call.method.equals("getConnectedWifi")) {
-            Map<String, Object> res = getConnectedWifi();
-            result.success(res);
+            try{
+                Map<String, Object> res = getConnectedWifi();
+                result.success(res);
+            } catch (Exception e) {
+                result.error("error", "getConnectedWifi", e.getLocalizedMessage());
+            }
         } else if (call.method.equals("getWifiArround")) {
-            List<Map<String, Object>> res = getWifiArround();
-            result.success(res);
+            try{
+                List<Map<String, Object>> res = getWifiArround();
+                result.success(res);
+            } catch (Exception e) {
+                result.error("error", "getWifiArround", e.getLocalizedMessage());
+            }
         } else if (call.method.equals("getNetworkState")) {
-            List<String> res = getNetworkState();
-            result.success(res);
+            try{
+                Map<String, List<String>> res = getNetworkState();
+                result.success(res);
+            } catch (Exception e) {
+                result.error("error", "getNetworkState", e.getLocalizedMessage());
+            }
         } else {
             result.notImplemented();
         }
     }
 
-    public List<Map<String, Object>> getWifiArround() {
+    private List<Map<String, Object>> getWifiArround() throws Exception {
         List<Map<String, Object>> list = new ArrayList<>();
-        Context context = registrar.context();
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (networkInfo.isConnected()) {
@@ -75,16 +91,15 @@ public class PitNetworkPlugin implements MethodCallHandler {
                 result.put("BSSID", scanRes.BSSID);
                 result.put("capabilities", scanRes.capabilities);
                 result.put("frequency", scanRes.frequency);
-                result.put("timeStamp", scanRes.timestamp);
+                result.put("timeStamp", System.currentTimeMillis() - SystemClock.elapsedRealtime() + (scanRes.timestamp / 1000));
                 list.add(result);
             }
         }
         return list;
     }
 
-    public List<Map<String, Object>> getSavedWifi() {
+    private List<Map<String, Object>> getSavedWifi() throws Exception{
         List<Map<String, Object>> list = new ArrayList<>();
-        Context context = registrar.context();
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (networkInfo.isConnected()) {
@@ -100,9 +115,8 @@ public class PitNetworkPlugin implements MethodCallHandler {
         return list;
     }
 
-    public Map<String, Object> getConnectedWifi() {
+    private Map<String, Object> getConnectedWifi() throws Exception{
         Map<String, Object> result = new HashMap<>();
-        Context context = registrar.context();
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if (networkInfo.isConnected()) {
@@ -118,9 +132,9 @@ public class PitNetworkPlugin implements MethodCallHandler {
         return result;
     }
 
-    private List<String> getNetworkState() {
-        Context context = registrar.context();
+    private Map<String, List<String>> getNetworkState() throws Exception {
         List<String> listString = new ArrayList<>();
+        Map<String, List<String>> result = new HashMap<>();
         final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (cm != null) {
@@ -129,63 +143,63 @@ public class PitNetworkPlugin implements MethodCallHandler {
 
                 if (ni != null) {
                     if (ni.getType() == ConnectivityManager.TYPE_WIFI) {
-                        listString.add("Connection Type : WIFI");
+                        listString.add("WIFI");
                     } else if (ni.getType() == ConnectivityManager.TYPE_MOBILE) {
-                        listString.add("Connection Type : MOBILE NETWORK");
+                        listString.add("MOBILE NETWORK");
                         switch (ni.getSubtype()) {
                             case TelephonyManager.NETWORK_TYPE_1xRTT:
-                                listString.add("Network Type : NETWORK_TYPE_1xRTT NETWORK");
+                                listString.add("NETWORK_TYPE_1xRTT NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_CDMA:
-                                listString.add("Network Type : NETWORK_TYPE_CDMA NETWORK");
+                                listString.add("NETWORK_TYPE_CDMA NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_EDGE:
-                                listString.add("Network Type : NETWORK_TYPE_EDGE NETWORK");
+                                listString.add("NETWORK_TYPE_EDGE NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                                listString.add("Network Type : NETWORK_TYPE_EVDO_0 NETWORK");
+                                listString.add("NETWORK_TYPE_EVDO_0 NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                                listString.add("Network Type : NETWORK_TYPE_EVDO_A NETWORK");
+                                listString.add("NETWORK_TYPE_EVDO_A NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_GPRS:
-                                listString.add("Network Type : NETWORK_TYPE_GPRS NETWORK");
+                                listString.add("NETWORK_TYPE_GPRS NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_HSDPA:
-                                listString.add("Network Type : NETWORK_TYPE_HSDPA NETWORK");
+                                listString.add("NETWORK_TYPE_HSDPA NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_HSPA:
-                                listString.add("Network Type : NETWORK_TYPE_HSPA NETWORK");
+                                listString.add("NETWORK_TYPE_HSPA NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_HSUPA:
-                                listString.add("Network Type : NETWORK_TYPE_HSPA NETWORK");
+                                listString.add("NETWORK_TYPE_HSPA NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_UMTS:
-                                listString.add("Network Type : NETWORK_TYPE_UMTS NETWORK");
+                                listString.add("NETWORK_TYPE_UMTS NETWORK");
                                 break;
                             /*
                              * Above API level 7, make sure to set android:targetSdkVersion
                              * to appropriate level to use these
                              */
                             case TelephonyManager.NETWORK_TYPE_EHRPD: // API level 11
-                                listString.add("Network Type : NETWORK_TYPE_EHRPD NETWORK");
+                                listString.add("NETWORK_TYPE_EHRPD NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_EVDO_B: // API level 9
-                                listString.add("Network Type : NETWORK_TYPE_EVDO_B NETWORK");
+                                listString.add("NETWORK_TYPE_EVDO_B NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_HSPAP: // API level 13
-                                listString.add("Network Type : NETWORK_TYPE_HSPAP NETWORK");
+                                listString.add("NETWORK_TYPE_HSPAP NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_IDEN: // API level 8
-                                listString.add("Network Type : NETWORK_TYPE_IDEN NETWORK");
+                                listString.add("NETWORK_TYPE_IDEN NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_LTE: // API level 11
-                                listString.add("Network Type : NETWORK_TYPE_LTE NETWORK");
+                                listString.add("NETWORK_TYPE_LTE NETWORK");
                                 break;
                             // Unknown
                             case TelephonyManager.NETWORK_TYPE_UNKNOWN:
                             default:
-                                listString.add("Network Type : UNKNOWM NETWORK");
+                                listString.add("UNKNOWM NETWORK");
                                 break;
                         }
                     }
@@ -197,64 +211,64 @@ public class PitNetworkPlugin implements MethodCallHandler {
                     final NetworkCapabilities nc = cm.getNetworkCapabilities(n);
 
                     if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                        listString.add("Connection Type : WIFI");
+                        listString.add("WIFI");
                     } else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                        listString.add("Connection Type : MOBILE NETWORK");
+                        listString.add("MOBILE NETWORK");
 
                         switch (ni.getSubtype()) {
                             case TelephonyManager.NETWORK_TYPE_1xRTT:
-                                listString.add("Connection Type : NETWORK_TYPE_1xRTT NETWORK");
+                                listString.add("NETWORK_TYPE_1xRTT NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_CDMA:
-                                listString.add("Connection Type : NETWORK_TYPE_CDMA NETWORK");
+                                listString.add("NETWORK_TYPE_CDMA NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_EDGE:
-                                listString.add("Connection Type : NETWORK_TYPE_EDGE NETWORK");
+                                listString.add("NETWORK_TYPE_EDGE NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_EVDO_0:
-                                listString.add("Connection Type : NETWORK_TYPE_EVDO_0 NETWORK");
+                                listString.add("NETWORK_TYPE_EVDO_0 NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_EVDO_A:
-                                listString.add("Connection Type : NETWORK_TYPE_EVDO_A NETWORK");
+                                listString.add("NETWORK_TYPE_EVDO_A NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_GPRS:
-                                listString.add("Connection Type : NETWORK_TYPE_GPRS NETWORK");
+                                listString.add("NETWORK_TYPE_GPRS NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_HSDPA:
-                                listString.add("Connection Type : NETWORK_TYPE_HSDPA NETWORK");
+                                listString.add("NETWORK_TYPE_HSDPA NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_HSPA:
-                                listString.add("Connection Type : NETWORK_TYPE_HSPA NETWORK");
+                                listString.add("NETWORK_TYPE_HSPA NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_HSUPA:
-                                listString.add("Connection Type : NETWORK_TYPE_HSPA NETWORK");
+                                listString.add("NETWORK_TYPE_HSPA NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_UMTS:
-                                listString.add("Connection Type : NETWORK_TYPE_UMTS NETWORK");
+                                listString.add("NETWORK_TYPE_UMTS NETWORK");
                                 break;
                             /*
                              * Above API level 7, make sure to set android:targetSdkVersion
                              * to appropriate level to use these
                              */
                             case TelephonyManager.NETWORK_TYPE_EHRPD: // API level 11
-                                listString.add("Connection Type : NETWORK_TYPE_EHRPD NETWORK");
+                                listString.add("NETWORK_TYPE_EHRPD NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_EVDO_B: // API level 9
-                                listString.add("Connection Type : NETWORK_TYPE_EVDO_B NETWORK");
+                                listString.add("NETWORK_TYPE_EVDO_B NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_HSPAP: // API level 13
-                                listString.add("Connection Type : NETWORK_TYPE_HSPAP NETWORK");
+                                listString.add("NETWORK_TYPE_HSPAP NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_IDEN: // API level 8
-                                listString.add("Connection Type : NETWORK_TYPE_IDEN NETWORK");
+                                listString.add("NETWORK_TYPE_IDEN NETWORK");
                                 break;
                             case TelephonyManager.NETWORK_TYPE_LTE: // API level 11
-                                listString.add("Connection Type : NETWORK_TYPE_LTE NETWORK");
+                                listString.add("NETWORK_TYPE_LTE NETWORK");
                                 break;
                             // Unknown
                             case TelephonyManager.NETWORK_TYPE_UNKNOWN:
                             default:
-                                listString.add("Connection Type : UNKNOWM NETWORK");
+                                listString.add("UNKNOWM NETWORK");
                                 break;
                         }
 
@@ -262,6 +276,7 @@ public class PitNetworkPlugin implements MethodCallHandler {
                 }
             }
         }
-        return listString;
+        result.put("connectionType", listString);
+        return result;
     }
 }
