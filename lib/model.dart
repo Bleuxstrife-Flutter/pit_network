@@ -53,11 +53,12 @@ class WifiArroundModel {
 }
 
 class NetworkStateModel {
-  final List<dynamic> connectionType;
+  final List<String> connectionType;
 
   NetworkStateModel({this.connectionType});
 
   factory NetworkStateModel.fromJson(Map<String, dynamic> json) {
-    return NetworkStateModel(connectionType: json["connectionType"] as List<dynamic>);
+
+    return NetworkStateModel(connectionType: List<String>.from(json["connectionType"]));
   }
 }

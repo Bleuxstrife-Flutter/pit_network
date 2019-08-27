@@ -1,3 +1,6 @@
+## 0.1.1+1
+* now return List<String> instead List<dynamic> in NetworkStateModel
+
 ## 0.1.1
 * return List model instead List<dynamic>
 

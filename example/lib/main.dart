@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
           body: SingleChildScrollView(
             child: Center(
               child: Text(
-                  'Connected to Wifi: $connectedWifi\n\n Network State : $networkState\n\nSaved Wifi : $savedWifi\n\n Arround : $wifiArround'),
+                  'Connected to Wifi: $connectedWifi\n\n Network State : $networkState \n\nSaved Wifi : $savedWifi\n\n Arround : $wifiArround'),
             ),
           )),
     );
