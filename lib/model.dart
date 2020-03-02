@@ -59,6 +59,6 @@ class NetworkStateModel {
 
   factory NetworkStateModel.fromJson(Map<String, dynamic> json) {
 
-    return NetworkStateModel(connectionType: List<String>.from(json["connectionType"]));
+    return NetworkStateModel(connectionType: List<String>.from(json["connectionType"] ?? []));
   }
 }

@@ -9,7 +9,7 @@ Use this Plugin to get wifi connected, list of saved wifi, list of active wifi, 
 First, add `pit_network` as a [dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
 
 ```
-pit_network: ^0.1.1+1
+pit_network: ^0.1.2
 ```
 
 ## Important

@@ -9,6 +9,14 @@ public class SwiftPitNetworkPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+     if (call.method.elementsEqual("getConnectedWifi")){
+        result(Dictionary<String, String>())
+     } else if (call.method.elementsEqual("getNetworkState")){
+        result(Dictionary<String, String>())
+     } else if (call.method.elementsEqual("getSavedWifi")){
+        result([String]())
+     } else if (call.method.elementsEqual("getWifiArround")){
+        result([String]())
+     }
   }
 }
