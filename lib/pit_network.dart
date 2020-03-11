@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:pit_network/model.dart';
 
+export 'package:pit_network/model.dart';
+
 class PitNetwork {
   static const MethodChannel _channel = const MethodChannel('pit_network');
 
