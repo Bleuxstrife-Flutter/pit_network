@@ -1,3 +1,7 @@
+## 0.1.2+1
+
+* minor fix
+
 ## 0.1.2
 
 * Fix for IOS

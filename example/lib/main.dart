@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:pit_network/model.dart';
 import 'package:pit_network/pit_network.dart';
 
 void main() => runApp(MyApp());

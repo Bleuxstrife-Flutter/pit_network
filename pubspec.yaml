@@ -1,6 +1,6 @@
 name: pit_network
 description: plugin to get wifi connected, list of saved wifi, list of active wifi, and network state
-version: 0.1.2
+version: 0.1.2+1
 author: Yudistira Yoga <yudhistiray198@gmail.com>
 homepage: https://github.com/Suzaku10/pit_network
 
